@@ -56,6 +56,6 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             new Listing { Id = 6, Title = "1-комн. у ТРЦ",                  Price = 36000, Rooms = 1, DistrictId = 2, CreatedAt = D(18, 16, 45) },
             new Listing { Id = 7, Title = "3-комн. семейная",               Price = 66000, Rooms = 3, DistrictId = 3, CreatedAt = D(20, 9, 30) },
             new Listing { Id = 8, Title = "2-комн. срочно, торг",           Price = 39000, Rooms = 2, DistrictId = 1, CreatedAt = D(24, 12, 0) },
-            new Listing { Id = 8, Title = "NEW",                            Price = 99999, Rooms = 12, DistrictId = 2, CreatedAt = D(14, 6, 10), Address = "Mirobod, 1, дом 12" });
+            new Listing { Id = 8, Title = "NEW",                            Price = 99919, Rooms = 12, DistrictId = 2, CreatedAt = D(14, 6, 10), Address = "Mirobod, 1, дом 12" });
     }
 }
