@@ -1,0 +1,19 @@
+<article class="card">
+  @if (listing().photoUrl; as url) {
+    <img class="photo" [src]="url | photoSrc" [alt]="listing().title">
+  }
+  <header>
+    <h3>{{ listing().title }}</h3>
+    @if (isCheap()) {
+      <span class="badge">выгодно</span>
+    }
+  </header>
+  <p class="muted">{{ listing().districtName }} · {{ roomsLabel() }}</p>
+  <p class="price">{{ listing().price | number:'1.0-0' }} у.е.</p>
+  <footer class="muted">
+    <time [attr.datetime]="listing().createdAt">
+      {{ listing().createdAt | date:'d MMM yyyy' }}
+    </time>
+    <a [routerLink]="['/listings', listing().id]" class="more">Подробнее</a>
+  </footer>
+</article>

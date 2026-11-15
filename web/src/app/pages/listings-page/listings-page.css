@@ -1,0 +1,8 @@
+.title-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.refresh { background: none; border: 1px solid #d1d5db; border-radius: 6px; padding: 8px 14px; }
+.refresh:disabled { opacity: .5; cursor: wait; }
+.controls { display: flex; flex-wrap: wrap; gap: 16px; margin: 4px 0 12px; }
+.controls label { display: inline-flex; gap: 8px; align-items: center; font-size: .875rem; }
+.pager { display: flex; gap: 16px; align-items: center; justify-content: center; margin-top: 24px; }
+.pager button { background: white; border: 1px solid #d1d5db; border-radius: 6px; padding: 8px 14px; }
+.pager button:disabled { opacity: .4; cursor: default; }

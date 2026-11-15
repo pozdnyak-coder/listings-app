@@ -1,0 +1,51 @@
+# Render Blueprint: одна команда создаёт базу + API + сайт.
+# Render → New → Blueprint → выбрать репозиторий listings-app → Apply.
+#
+# ВАЖНО: имена сервисов определяют адреса (https://<имя>.onrender.com) и должны быть уникальны на Render.
+# Если имя занято, Render добавит к адресу суффикс — тогда поправьте API_URL и Cors__Origins__0 (см. ИНСТРУКЦИЯ.md, шаг 9).
+
+databases:
+  - name: listings-app-db
+    databaseName: listings
+    user: listings
+    region: frankfurt
+    plan: free
+
+services:
+  # ---- Backend: ASP.NET Core в Docker ----
+  - type: web
+    name: listings-app-api
+    runtime: docker
+    region: frankfurt
+    plan: free
+    dockerfilePath: ./api/Dockerfile
+    dockerContext: ./api
+    healthCheckPath: /health
+    envVars:
+      - key: Database__Provider
+        value: Postgres
+      - key: ConnectionStrings__Default
+        fromDatabase:
+          name: listings-app-db
+          property: connectionString
+      - key: Jwt__Key
+        generateValue: true            # случайная строка, длина больше 32
+      - key: Cors__Origins__0
+        value: https://listings-app-web.onrender.com   # адрес сайта (без слэша на конце!)
+
+  # ---- Frontend: Angular как статический сайт ----
+  - type: web
+    name: listings-app-web
+    runtime: static
+    rootDir: web
+    buildCommand: npm ci && node scripts/set-env.mjs && npm run build
+    staticPublishPath: ./dist/web/browser
+    envVars:
+      - key: API_URL
+        value: https://listings-app-api.onrender.com   # адрес API (без слэша на конце!)
+      - key: NODE_VERSION
+        value: "22"
+    routes:
+      - type: rewrite                  # F5 на /listings/5 должен открывать приложение, а не 404
+        source: /*
+        destination: /index.html

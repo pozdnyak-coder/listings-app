@@ -1,0 +1,6 @@
+.panel { background: white; border: 1px solid #e5e7eb; border-radius: 12px; padding: 20px; max-width: 720px; }
+.photo { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 8px; margin-bottom: 12px; }
+h2 { margin: 0; font-size: 1.25rem; }
+dl { display: grid; grid-template-columns: auto 1fr; gap: 6px 16px; margin: 16px 0 0; }
+dt { color: #6b7280; }
+dd { margin: 0; }

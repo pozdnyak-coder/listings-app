@@ -1,0 +1,147 @@
+@api = http://localhost:5000
+# после входа скопируйте token из ответа сюда:
+@token = вставьте-токен-из-ответа-login
+@token2 = токен-второго-пользователя
+
+### ---------- Справочники ----------
+GET {{api}}/api/districts
+
+### ---------- Чтение (без входа) ----------
+### Страница 1 по 6
+GET {{api}}/api/listings?pageSize=6
+
+### Страница 2, сначала дешёвые
+GET {{api}}/api/listings?page=2&pageSize=6&sort=price_asc
+
+### Фильтр по району и цене
+GET {{api}}/api/listings?districtId=1&maxPrice=50000
+
+### Слишком далёкая страница — items пустой
+GET {{api}}/api/listings?page=100&pageSize=6
+
+### Слишком большой pageSize — станет 50
+GET {{api}}/api/listings?pageSize=99999
+
+### Одно объявление
+GET {{api}}/api/listings/1
+
+### Несуществующее — 404
+GET {{api}}/api/listings/999999
+
+### ---------- Регистрация и вход ----------
+### Регистрация — 200 и token
+POST {{api}}/api/auth/register
+Content-Type: application/json
+
+{ "email": "aziz@example.uz", "password": "secret123" }
+
+### Повторная регистрация (другой регистр) — 400, errors.email
+POST {{api}}/api/auth/register
+Content-Type: application/json
+
+{ "email": "AZIZ@example.uz ", "password": "secret123" }
+
+### Слабый пароль — 400, errors.password
+POST {{api}}/api/auth/register
+Content-Type: application/json
+
+{ "email": "new@example.uz", "password": "short" }
+
+### Вход — 200 и token
+POST {{api}}/api/auth/login
+Content-Type: application/json
+
+{ "email": "aziz@example.uz", "password": "secret123" }
+
+### Неверный пароль — 401
+POST {{api}}/api/auth/login
+Content-Type: application/json
+
+{ "email": "aziz@example.uz", "password": "wrong-pass1" }
+
+### Кто я — 200 с токеном; без заголовка — 401
+GET {{api}}/api/auth/me
+Authorization: Bearer {{token}}
+
+### ---------- Создание и права ----------
+### Без токена — 401
+POST {{api}}/api/listings
+Content-Type: application/json
+
+{ "title": "2-комнатная у метро", "price": 450, "rooms": 2, "districtId": 1, "address": "ул. Бунёдкор, 5" }
+
+### С токеном — 201 и Location
+POST {{api}}/api/listings
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "title": "2-комнатная у метро", "price": 450, "rooms": 2, "districtId": 1, "address": "ул. Бунёдкор, 5" }
+
+### Всё пустое — 400, errors по title, price, rooms, districtId
+POST {{api}}/api/listings
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "title": "", "price": 0, "rooms": 0, "districtId": 0 }
+
+### Слишком короткий заголовок — 400 «Не короче 5 символов»
+POST {{api}}/api/listings
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "title": "Дом", "price": 500, "rooms": 2, "districtId": 1 }
+
+### Несуществующий район — 400
+POST {{api}}/api/listings
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "title": "Квартира у парка", "price": 500, "rooms": 2, "districtId": 999 }
+
+### Неверный тип — 400 без errors по полю
+POST {{api}}/api/listings
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "title": "Квартира у парка", "price": "abc", "rooms": 2, "districtId": 1 }
+
+### Мои объявления — 200; без токена 401
+GET {{api}}/api/listings/mine
+Authorization: Bearer {{token}}
+
+### Изменить своё (подставьте свой id) — 204
+PUT {{api}}/api/listings/13
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "title": "2-комнатная у метро (дешевле)", "price": 420, "rooms": 2, "districtId": 1 }
+
+### То же чужим токеном — 403
+PUT {{api}}/api/listings/13
+Authorization: Bearer {{token2}}
+Content-Type: application/json
+
+{ "title": "Взлом чужого объявления", "price": 1, "rooms": 2, "districtId": 1 }
+
+### Объявление из начальных данных (автора нет) — 403
+DELETE {{api}}/api/listings/1
+Authorization: Bearer {{token}}
+
+### Удалить своё — 204, повторно — 404
+DELETE {{api}}/api/listings/13
+Authorization: Bearer {{token}}
+
+### ---------- Фото (положите test.png рядом с этим файлом) ----------
+POST {{api}}/api/listings/13/photo
+Authorization: Bearer {{token}}
+Content-Type: multipart/form-data; boundary=BOUNDARY
+
+--BOUNDARY
+Content-Disposition: form-data; name="file"; filename="test.png"
+Content-Type: image/png
+
+< ./test.png
+--BOUNDARY--
+
+### Проверка работоспособности (используется Render)
+GET {{api}}/health

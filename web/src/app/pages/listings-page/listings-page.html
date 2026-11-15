@@ -1,0 +1,44 @@
+<div class="title-row">
+  <h1>Объявления</h1>
+  <button type="button" class="refresh" (click)="refresh()" [disabled]="listings.isLoading()">
+    {{ listings.isLoading() ? 'Обновляем…' : 'Обновить' }}
+  </button>
+</div>
+
+<app-listing-filter [districts]="districts.value()" (filterChange)="onFilter($event)" />
+
+<div class="controls">
+  <label>Сортировка
+    <select (change)="onSort($event)">
+      <option value="new">Сначала новые</option>
+      <option value="price_asc">Сначала дешёвые</option>
+      <option value="price_desc">Сначала дорогие</option>
+    </select>
+  </label>
+  <label>На странице
+    <select [value]="pageSize()" (change)="onPageSize($event)">
+      @for (s of pageSizes; track s) {
+        <option [value]="s">{{ s }}</option>
+      }
+    </select>
+  </label>
+</div>
+
+@if (listings.isLoading()) {
+  <p class="muted">Загрузка объявлений…</p>
+} @else if (listings.error(); as err) {
+  <div class="error-box">
+    <p>{{ err | errorMessage }}</p>
+    <button type="button" (click)="listings.reload()">Повторить</button>
+  </div>
+} @else if (listings.hasValue()) {
+  <app-listing-list
+    [listings]="listings.value().items"
+    [total]="listings.value().total" />
+
+  <nav class="pager">
+    <button type="button" (click)="page.set(page() - 1)" [disabled]="page() === 1">← Назад</button>
+    <span>Страница {{ page() }} из {{ totalPages() }}</span>
+    <button type="button" (click)="page.set(page() + 1)" [disabled]="page() >= totalPages()">Вперёд →</button>
+  </nav>
+}

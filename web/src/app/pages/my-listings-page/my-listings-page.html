@@ -1,0 +1,14 @@
+<h1>Мои объявления</h1>
+@if (listings.isLoading()) {
+  <p class="muted">Загрузка…</p>
+} @else if (listings.error(); as err) {
+  <div class="error-box">
+    <p>{{ err | errorMessage }}</p>
+    <button type="button" (click)="listings.reload()">Повторить</button>
+  </div>
+} @else if (listings.hasValue()) {
+  <app-listing-list [listings]="listings.value()" [total]="listings.value().length" />
+  @if (listings.value().length === 0) {
+    <p><a routerLink="/listings/new">Добавить первое объявление</a></p>
+  }
+}

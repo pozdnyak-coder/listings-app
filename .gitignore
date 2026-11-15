@@ -1,0 +1,25 @@
+# .NET
+bin/
+obj/
+*.db
+*.db-shm
+*.db-wal
+.vs/
+*.user
+logs/
+
+# загруженные фото — данные пользователей, не код
+api/wwwroot/uploads/*
+!api/wwwroot/uploads/.gitkeep
+
+# Angular / Node
+node_modules/
+.angular/
+dist/
+.vscode/*
+!.vscode/extensions.json
+
+# разное
+.DS_Store
+Thumbs.db
+*.log
